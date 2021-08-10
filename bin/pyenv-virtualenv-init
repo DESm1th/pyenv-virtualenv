@@ -92,7 +92,8 @@ EOS
   ;;
 * )
   cat <<EOS
-export PATH="${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims:\${PATH}";
+# Disabled to let the module file handle path changes
+# export PATH="${PYENV_VIRTUALENV_ROOT:-${PYENV_VIRTUALENV_INSTALL_PREFIX}}/shims:\${PATH}";
 export PYENV_VIRTUALENV_INIT=1;
 EOS
   ;;
