@@ -232,6 +232,7 @@ PYENV_VIRTUALENV_ROOT="$(abs_dirname "$0")/.."
 if [ -z "${PYENV_VIRTUALENV_CACHE_PATH}" ]; then
   PYENV_VIRTUALENV_CACHE_PATH="${PYTHON_BUILD_CACHE_PATH:-${PYENV_ROOT}/cache}"
 fi
+
 VIRTUALENV_OPTIONS=()
 
 unset FORCE
@@ -347,15 +348,19 @@ if [[ "${VERSION_NAME%/envs/*}" == "system" ]]; then
 else
   VIRTUALENV_PREFIX="$(pyenv-virtualenv-prefix 2>/dev/null || true)"
   if [[ "${VIRTUALENV_PREFIX%/*}" == "${PYENV_ROOT}/versions" ]]; then
-    VIRTUALENV_NAME="${VIRTUALENV_PREFIX#${PYENV_ROOT}/versions/}/envs/${VIRTUALENV_NAME##*/}"
+    VIRTUALENV_NAME="${VIRTUALENV_PREFIX#${PYENV_ROOT}/versions/}/envs/${USER}/${VIRTUALENV_NAME##*/}"
   else
-    VIRTUALENV_NAME="${VERSION_NAME}/envs/${VIRTUALENV_NAME##*/}"
+    VIRTUALENV_NAME="${VERSION_NAME}/envs/${USER}/${VIRTUALENV_NAME##*/}"
   fi
 fi
 
 VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME}"
 if [[ "${VIRTUALENV_PATH/*/envs/*}" != "${PYENV_ROOT}/versions" ]]; then
-  COMPAT_VIRTUALENV_PATH="${PYENV_ROOT}/versions/${VIRTUALENV_NAME##*/}"
+  MULTIUSER_PREFIX="${PYENV_ROOT}/versions/user_envs/${USER}"
+  if [ ! -d "${MULTIUSER_PREFIX}" ]; then
+    mkdir -p "${MULTIUSER_PREFIX}"
+  fi
+  COMPAT_VIRTUALENV_PATH="${MULTIUSER_PREFIX}/${VIRTUALENV_NAME##*/}"
 fi
 
 if [ -n "${COMPAT_VIRTUALENV_PATH}" ]; then
